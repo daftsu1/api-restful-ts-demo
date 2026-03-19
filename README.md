@@ -117,10 +117,10 @@ npm test
 | `unit/repositories/payment.repository.test.ts` | Unitario | CRUD + findByAppointmentId, findByStripePaymentIntentId (8 tests). |
 | `unit/repositories/user.repository.test.ts` | Unitario | CRUD + findByEmail, findDoctors con/sin specialty (9 tests). |
 | **Services** | | |
-| `unit/appointment.service.test.ts` | Unitario | Validaciones de estado, permisos, conflictos de slot (19 tests). |
-| `unit/auth.service.test.ts` | Unitario | Registro, login, JWT, duplicados (6 tests). |
-| `unit/payment.service.test.ts` | Unitario | handleSucceeded, payWithStripe y edge-cases con Stripe mock (7 tests). |
-| `unit/doctor.service.test.ts` | Unitario | listDoctors, getAvailableSlots (4 tests). |
+| `unit/services/appointment.service.test.ts` | Unitario | Validaciones de estado, permisos, conflictos de slot (19 tests). |
+| `unit/services/auth.service.test.ts` | Unitario | Registro, login, JWT, duplicados (6 tests). |
+| `unit/services/payment.service.test.ts` | Unitario | handleSucceeded, payWithStripe y edge-cases con Stripe mock (7 tests). |
+| `unit/services/doctor.service.test.ts` | Unitario | listDoctors, getAvailableSlots (4 tests). |
 | `payment.service.test.ts` | Unitario | handleStripePaymentIntentSucceeded aislado (1 test). |
 | `slots.test.ts` | Unitario | SlotHelper básico (5 tests). |
 | **Controllers** | | |
