@@ -102,13 +102,33 @@ Copiá `.env.example` a `.env` y completá valores.
 npm test
 ```
 
+**112 tests unitarios + tests de integración.**
+
 | Archivo | Tipo | Detalle |
 |---------|------|---------|
-| `slots.test.ts` | Unitario | `SlotHelper` puro, sin DB ni HTTP. |
-| `payment.service.test.ts` | Unitario | `PaymentService` con repos mockeados (`jest.fn()`). |
-| `unit/appointment.service.test.ts` | Unitario | `AppointmentService` con repo mockeado: validaciones de estado, permisos, conflictos de slot (19 tests). |
-| `unit/auth.service.test.ts` | Unitario | `AuthService` con repo mockeado: registro, login, JWT, duplicados (6 tests). |
-| `unit/payment.service.test.ts` | Unitario | `PaymentService` completo con repos + Stripe mockeados: `handleSucceeded`, `payWithStripe` y edge-cases (7 tests). |
+| **Utils** | | |
+| `unit/utils/AppError.test.ts` | Unitario | Herencia Error, statusCode, isOperational, stack trace. |
+| `unit/utils/ResponseFactory.test.ts` | Unitario | `success()` y `error()` con status y body esperados. |
+| `unit/utils/SlotHelper.test.ts` | Unitario | getAllSlots, isValidSlot, isDateInPast, getAvailableSlots (18 tests). |
+| **Middlewares** | | |
+| `unit/middlewares/roleGuard.test.ts` | Unitario | Sin user → 401, rol incorrecto → 403, rol correcto → next(), multi-rol. |
+| **Repositories** | | |
+| `unit/repositories/appointment.repository.test.ts` | Unitario | Modelo Mongoose mockeado: CRUD, findByDoctorAndSlot, findOccupiedSlots, etc. (14 tests). |
+| `unit/repositories/payment.repository.test.ts` | Unitario | CRUD + findByAppointmentId, findByStripePaymentIntentId (8 tests). |
+| `unit/repositories/user.repository.test.ts` | Unitario | CRUD + findByEmail, findDoctors con/sin specialty (9 tests). |
+| **Services** | | |
+| `unit/appointment.service.test.ts` | Unitario | Validaciones de estado, permisos, conflictos de slot (19 tests). |
+| `unit/auth.service.test.ts` | Unitario | Registro, login, JWT, duplicados (6 tests). |
+| `unit/payment.service.test.ts` | Unitario | handleSucceeded, payWithStripe y edge-cases con Stripe mock (7 tests). |
+| `unit/doctor.service.test.ts` | Unitario | listDoctors, getAvailableSlots (4 tests). |
+| `payment.service.test.ts` | Unitario | handleStripePaymentIntentSucceeded aislado (1 test). |
+| `slots.test.ts` | Unitario | SlotHelper básico (5 tests). |
+| **Controllers** | | |
+| `unit/controllers/appointment.controller.test.ts` | Unitario | 7 acciones: create, mine, today, confirm, reject, reschedule, complete. |
+| `unit/controllers/payment.controller.test.ts` | Unitario | pay → payWithStripe, responde 201. |
+| `unit/controllers/doctor.controller.test.ts` | Unitario | list con/sin specialty, slots. |
+| `unit/controllers/auth.controller.test.ts` | Unitario | register → 201, login → 200. |
+| **Integración** | | |
 | `auth.test.ts` | Integración | Express real + Mongo en memoria + HTTP con `supertest`. |
 | `appointments.test.ts` | Integración | Stack completo (HTTP → middleware → service → Mongoose → Mongo en memoria). Stripe mockeado. |
 
@@ -151,7 +171,7 @@ npm test
 
 ### Tests
 
-- **Unitarios** (`slots`, `unit/appointment.service`, `unit/auth.service`, `unit/payment.service`, `payment.service`): servicios y funciones aislados con repos y Stripe **mockeados** (`jest.fn()`), sin DB ni HTTP. Cubren validaciones de estado, permisos, conflictos de slot, registro/login, JWT y flujo de pago completo.
+- **Unitarios (112 tests)**: todas las capas aisladas — utils, middlewares, repositories (modelo Mongoose mockeado), services (repos mockeados), controllers (service mockeado). Sin DB ni HTTP; solo `jest.fn()`.
 - **Integración** (`auth`, `appointments`): `supertest` + Express real + `mongodb-memory-server`. Recorren el stack completo (HTTP → middlewares → services → repos → Mongoose). Stripe **mockeado** con `jest.mock`.
 - **`mongodb-memory-server`** como entorno: no hace falta tener Mongo instalado para correr la suite.
 
