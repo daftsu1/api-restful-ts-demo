@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  mongo:
+    image: mongo:6
+    container_name: medical_api_mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --quiet --eval \"db.adminCommand('ping')\" || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  api:
+    build: .
+    container_name: medical_api
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+volumes:
+  mongo_data:
+
