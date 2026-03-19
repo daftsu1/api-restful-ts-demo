@@ -102,7 +102,15 @@ Copiá `.env.example` a `.env` y completá valores.
 npm test
 ```
 
-**mongodb-memory-server** + mock de Stripe en tests de citas.
+| Archivo | Tipo | Detalle |
+|---------|------|---------|
+| `slots.test.ts` | Unitario | `SlotHelper` puro, sin DB ni HTTP. |
+| `payment.service.test.ts` | Unitario | `PaymentService` con repos mockeados (`jest.fn()`). |
+| `unit/appointment.service.test.ts` | Unitario | `AppointmentService` con repo mockeado: validaciones de estado, permisos, conflictos de slot (19 tests). |
+| `unit/auth.service.test.ts` | Unitario | `AuthService` con repo mockeado: registro, login, JWT, duplicados (6 tests). |
+| `unit/payment.service.test.ts` | Unitario | `PaymentService` completo con repos + Stripe mockeados: `handleSucceeded`, `payWithStripe` y edge-cases (7 tests). |
+| `auth.test.ts` | Integración | Express real + Mongo en memoria + HTTP con `supertest`. |
+| `appointments.test.ts` | Integración | Stack completo (HTTP → middleware → service → Mongoose → Mongo en memoria). Stripe mockeado. |
 
 ---
 
@@ -143,8 +151,9 @@ npm test
 
 ### Tests
 
-- **`mongodb-memory-server`**: suite aislada sin depender de una Mongo instalada.
-- Tests de flujo de citas **mockean** la API de Stripe para no pegarle a Stripe ni filtrar secretos.
+- **Unitarios** (`slots`, `unit/appointment.service`, `unit/auth.service`, `unit/payment.service`, `payment.service`): servicios y funciones aislados con repos y Stripe **mockeados** (`jest.fn()`), sin DB ni HTTP. Cubren validaciones de estado, permisos, conflictos de slot, registro/login, JWT y flujo de pago completo.
+- **Integración** (`auth`, `appointments`): `supertest` + Express real + `mongodb-memory-server`. Recorren el stack completo (HTTP → middlewares → services → repos → Mongoose). Stripe **mockeado** con `jest.mock`.
+- **`mongodb-memory-server`** como entorno: no hace falta tener Mongo instalado para correr la suite.
 
 ### Documentación y DX
 
